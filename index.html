@@ -409,6 +409,12 @@
     transition: color 0.2s;
   }
   .cta-restart:hover { color: var(--text-muted); }
+  .cta-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 0.75rem 0 1.25rem;
+    line-height: 1.5;
+  }
 
   /* ─── FOOTER ─── */
   footer {
@@ -444,20 +450,19 @@
   <section class="screen active" id="screen-intro">
     <p class="intro-eyebrow">🩺 Test de Salud Financiera</p>
     <h1 class="intro-title">Descubre en qué punto<br>están tus finanzas hoy</h1>
-    <p class="intro-desc">10 preguntas que revelan tu situación real en las 4 dimensiones clave del dinero. Sin cuentas bancarias, sin registro. Solo respuestas honestas.</p>
+    <p class="intro-desc">8 preguntas que revelan tu situación real en las 3 dimensiones clave del dinero. Sin cuentas bancarias, sin registro. Solo respuestas honestas.</p>
 
     <div class="pillars-row">
       <div class="pillar-chip"><span class="dot" style="background:#3B82F6"></span>Protección</div>
       <div class="pillar-chip"><span class="dot" style="background:#22C55E"></span>Crecimiento</div>
       <div class="pillar-chip"><span class="dot" style="background:#C9924A"></span>Conocimiento</div>
-      <div class="pillar-chip"><span class="dot" style="background:#A78BFA"></span>Futuro</div>
     </div>
 
     <button class="btn-primary" id="btn-start">
       Iniciar diagnóstico
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </button>
-    <p class="meta-note">⏱ 3 minutos · Completamente gratuito · Sin registro</p>
+    <p class="meta-note">⏱ 2 minutos · Completamente gratuito · Sin registro</p>
 
     <hr class="intro-divider">
 
@@ -521,8 +526,8 @@
       <h2 class="cta-title">¿Quieres un plan 100% personalizado?</h2>
       <p class="cta-desc">Basado en tus respuestas, puedo mostrarte exactamente cómo construir o fortalecer tu portafolio en acciones, FIBRAs, crypto e inmuebles — con estrategia real y acompañamiento directo.</p>
       <button class="cta-main-btn" id="btn-whatsapp">
-        📲 Quiero mi sesión de diagnóstico →
-      </button><br>
+        📲 Enviar mis resultados por WhatsApp
+      </button>
       <button class="cta-restart" id="btn-restart">↺ Repetir el test</button>
     </div>
   </section>
@@ -597,17 +602,7 @@ const questions = [
     ]
   },
   {
-    id:7, category:"Protección patrimonial", dimension:"Protección",
-    text:"¿Tienes seguros y/o estructura legal para proteger tu patrimonio?",
-    options:[
-      {label:"No tengo ningún seguro ni estructura de protección", score:0},
-      {label:"Solo seguro médico básico", score:1},
-      {label:"Seguro de vida + médico, pero sin blindaje legal", score:2},
-      {label:"Tengo seguros, testamento o estructura (fideicomiso, empresa, etc.)", score:3}
-    ]
-  },
-  {
-    id:8, category:"Metas financieras", dimension:"Conocimiento",
+    id:7, category:"Metas financieras", dimension:"Conocimiento",
     text:"¿Tienes metas financieras escritas con fechas y montos concretos?",
     options:[
       {label:"No, solo sé que quiero 'ahorrar más' algún día", score:0},
@@ -617,17 +612,7 @@ const questions = [
     ]
   },
   {
-    id:9, category:"Planeación del retiro", dimension:"Futuro",
-    text:"¿Estás planeando activamente tu retiro o independencia financiera?",
-    options:[
-      {label:"Nunca lo he pensado, confío en el IMSS o la suerte", score:0},
-      {label:"Lo he pensado pero no he tomado ninguna acción", score:1},
-      {label:"Tengo una afore activa y algún ahorro voluntario", score:2},
-      {label:"Tengo una estrategia de retiro con fecha y cifra objetivo", score:3}
-    ]
-  },
-  {
-    id:10, category:"Mindset financiero", dimension:"Conocimiento",
+    id:8, category:"Mindset financiero", dimension:"Conocimiento",
     text:"¿Cómo describes tu relación emocional con el dinero?",
     options:[
       {label:"Me estresa, evito pensar en mis finanzas", score:0},
@@ -641,8 +626,7 @@ const questions = [
 const DIM_COLORS = {
   "Protección":"#3B82F6",
   "Crecimiento":"#22C55E",
-  "Conocimiento":"#C9924A",
-  "Futuro":"#A78BFA"
+  "Conocimiento":"#C9924A"
 };
 
 const LEVELS = [
@@ -735,19 +719,19 @@ function renderResult() {
   const pct = Math.round((total / max) * 100);
   const level = getLevel(pct);
 
-  document.getElementById('r-score').textContent = pct;
-  document.getElementById('r-score').style.color = level.color;
-  document.getElementById('score-circle') && (document.querySelector('.score-circle').style.borderColor = level.color);
-  document.getElementById('r-level').textContent = level.label;
-  document.getElementById('r-desc').textContent = level.desc;
-
-  // Dimensions
+  // Calculate dimensions
   const dims = {};
   questions.forEach((q, i) => {
     if (!dims[q.dimension]) dims[q.dimension] = { total: 0, max: 0 };
     dims[q.dimension].total += answers[i] !== undefined ? q.options[answers[i]].score : 0;
     dims[q.dimension].max += 3;
   });
+
+  document.getElementById('r-score').textContent = pct;
+  document.getElementById('r-score').style.color = level.color;
+  document.querySelector('.score-circle') && (document.querySelector('.score-circle').style.borderColor = level.color);
+  document.getElementById('r-level').textContent = level.label;
+  document.getElementById('r-desc').textContent = level.desc;
 
   document.getElementById('dims-grid').innerHTML = Object.entries(dims).map(([name, d]) => {
     const dp = Math.round((d.total / d.max) * 100);
@@ -765,7 +749,6 @@ function renderResult() {
     `;
   }).join('');
 
-  // Recommendations
   document.getElementById('recs-list').innerHTML = level.recs.map(r => `
     <div class="rec-item">
       <div class="rec-icon">${r.icon}</div>
@@ -773,23 +756,36 @@ function renderResult() {
     </div>
   `).join('');
 
-  // Build WhatsApp message with full results
+  // Build complete WhatsApp message with all answers
   const dimLines = Object.entries(dims).map(([name, d]) => {
     const dp = Math.round((d.total / d.max) * 100);
     const bar = dp >= 75 ? '🟢' : dp >= 50 ? '🟡' : dp >= 25 ? '🟠' : '🔴';
     return `${bar} ${name}: ${dp}%`;
   }).join('\n');
 
+  const answerLines = questions.map((q, i) => {
+    const selIdx = answers[i];
+    const selOpt = q.options[selIdx];
+    return `\n*${i + 1}. ${q.category}*\n${q.text}\n✓ ${selOpt.label} (${selOpt.score}/3 pts)`;
+  }).join('\n');
+
   const waMsg =
-`🩺 *TEST DE SALUD FINANCIERA - Alpha Analyst*
+`🩺 *TEST DE SALUD FINANCIERA*
+_Alpha Analyst_
 
-📊 *Score general: ${pct}/100*
-🏷️ Nivel: ${level.label.replace(/[^\w\s\u00C0-\u024F\u4E00-\u9FA5]/g,'').trim()}
+━━━━━━━━━━━━━━━━━━━━━
+📊 *SCORE: ${pct}/100*
+🏷️ ${level.label.replace(/[^\w\s\u00C0-\u024F]/g,'').trim()}
 
-📐 *Resultados por dimensión:*
+📐 *DIMENSIONES:*
 ${dimLines}
 
-💬 Acabo de completar el test y me interesa recibir un diagnóstico personalizado. ¿Podemos agendar una sesión?`;
+━━━━━━━━━━━━━━━━━━━━━
+📋 *MIS RESPUESTAS COMPLETAS:*
+${answerLines}
+
+━━━━━━━━━━━━━━━━━━━━━
+💬 Hola Carlos, estos son mis resultados. ¿Cuándo podemos agendar mi sesión de diagnóstico personalizado?`;
 
   const waUrl = `https://wa.me/523320352200?text=${encodeURIComponent(waMsg)}`;
   document.getElementById('btn-whatsapp').onclick = () => window.open(waUrl, '_blank');
