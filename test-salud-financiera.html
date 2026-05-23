@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de Salud Financiera · Alpha Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9924A;
+    --gold-light: #E8C285;
+    --gold-dim: rgba(201,146,74,0.15);
+    --bg: #0D0D0E;
+    --bg-card: #141416;
+    --bg-card2: #1A1A1D;
+    --border: rgba(255,255,255,0.07);
+    --border-gold: rgba(201,146,74,0.4);
+    --text: #F0EDE8;
+    --text-muted: rgba(240,237,232,0.5);
+    --text-dim: rgba(240,237,232,0.3);
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 12px;
+    --radius-lg: 18px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 1rem 4rem;
+  }
+
+  /* ─── LOGO / NAV ─── */
+  .topbar {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+  }
+  .brand { font-family: var(--serif); font-size: 1.1rem; color: var(--gold); letter-spacing: 0.02em; }
+  .brand span { color: var(--text-muted); font-size: 0.8rem; font-family: var(--sans); font-weight: 300; margin-left: 8px; }
+  .badge-top { font-size: 11px; color: var(--gold); border: 1px solid var(--border-gold); border-radius: 20px; padding: 4px 12px; letter-spacing: 0.06em; }
+
+  /* ─── MAIN WRAPPER ─── */
+  .wrapper {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; animation: fadeUp 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── INTRO ─── */
+  .intro-eyebrow {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+  .intro-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.18;
+    margin-bottom: 1.25rem;
+    background: linear-gradient(135deg, var(--text) 60%, var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .intro-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin-bottom: 2rem;
+    max-width: 480px;
+  }
+  .pillars-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 2.5rem;
+  }
+  .pillar-chip {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pillar-chip .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: var(--gold);
+    color: #0D0D0E;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .meta-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 1.25rem;
+  }
+  .intro-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+  .intro-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1rem;
+    text-align: center;
+  }
+  .feature-icon { font-size: 22px; margin-bottom: 0.5rem; }
+  .feature-label { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+  /* ─── PROGRESS ─── */
+  .progress-container { margin-bottom: 2rem; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-step { font-size: 12px; color: var(--text-dim); }
+  .progress-pct { font-size: 12px; color: var(--gold); }
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ─── QUESTION CARD ─── */
+  .q-category {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .q-text {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 3vw, 1.35rem);
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 1.75rem;
+    color: var(--text);
+  }
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem; }
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: left;
+    width: 100%;
+    color: var(--text-muted);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .opt:hover { border-color: var(--border-gold); color: var(--text); }
+  .opt.selected {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+    color: var(--text);
+  }
+  .opt-letter {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    margin-top: 1px;
+  }
+  .opt.selected .opt-letter {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #0D0D0E;
+  }
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+  }
+  .btn-ghost {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .btn-next {
+    padding: 11px 26px;
+    border-radius: var(--radius);
+    background: var(--gold);
+    color: #0D0D0E;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-next:not(:disabled):hover { background: var(--gold-light); }
+
+  /* ─── RESULT ─── */
+  .result-hero {
+    text-align: center;
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .score-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    position: relative;
+  }
+  .score-circle::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+  }
+  .score-num {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--gold);
+    position: relative;
+    line-height: 1;
+  }
+  .score-den { font-size: 11px; color: var(--text-dim); position: relative; margin-top: 2px; }
+  .result-level {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+  .result-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .dims-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .dim-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+  }
+  .dim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .dim-name { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .dim-pct { font-size: 13px; font-weight: 500; }
+  .dim-bar-bg {
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .dim-bar-fill { height: 100%; border-radius: 2px; }
+
+  /* ─── RECOMENDACIONES ─── */
+  .recs-title {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .rec-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rec-item:last-child { border-bottom: none; }
+  .rec-icon { font-size: 18px; min-width: 24px; margin-top: 2px; }
+  .rec-text { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
+  .rec-text strong { color: var(--text); font-weight: 500; }
+
+  /* ─── CTA ─── */
+  .cta-block {
+    margin-top: 2rem;
+    background: var(--bg-card2);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    text-align: center;
+  }
+  .cta-eyebrow { font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .cta-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 500; margin-bottom: 0.75rem; }
+  .cta-desc { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 1.5rem; }
+  .cta-main-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--gold);
+    color: #0D0D0E;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    margin-bottom: 1rem;
+  }
+  .cta-main-btn:hover { background: var(--gold-light); }
+  .cta-restart {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin: 0 auto;
+    transition: color 0.2s;
+  }
+  .cta-restart:hover { color: var(--text-muted); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    margin-top: 4rem;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 520px) {
+    .intro-features { grid-template-columns: 1fr 1fr; }
+    .dims-grid { grid-template-columns: 1fr; }
+    .intro-title { font-size: 1.75rem; }
+  }
+  @media (max-width: 360px) {
+    .intro-features { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">Alpha Analyst <span>· Carlos Financiero</span></div>
+  <div class="badge-top">Diagnóstico Gratuito</div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- ═══════════════ INTRO ═══════════════ -->
+  <section class="screen active" id="screen-intro">
+    <p class="intro-eyebrow">🩺 Test de Salud Financiera</p>
+    <h1 class="intro-title">Descubre en qué punto<br>están tus finanzas hoy</h1>
+    <p class="intro-desc">10 preguntas que revelan tu situación real en las 4 dimensiones clave del dinero. Sin cuentas bancarias, sin registro. Solo respuestas honestas.</p>
+
+    <div class="pillars-row">
+      <div class="pillar-chip"><span class="dot" style="background:#3B82F6"></span>Protección</div>
+      <div class="pillar-chip"><span class="dot" style="background:#22C55E"></span>Crecimiento</div>
+      <div class="pillar-chip"><span class="dot" style="background:#C9924A"></span>Conocimiento</div>
+      <div class="pillar-chip"><span class="dot" style="background:#A78BFA"></span>Futuro</div>
+    </div>
+
+    <button class="btn-primary" id="btn-start">
+      Iniciar diagnóstico
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <p class="meta-note">⏱ 3 minutos · Completamente gratuito · Sin registro</p>
+
+    <hr class="intro-divider">
+
+    <div class="intro-features">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-label">Score personalizado de 0 a 100</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-label">Diagnóstico por dimensión financiera</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-label">Recomendaciones específicas para ti</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ QUIZ ═══════════════ -->
+  <section class="screen" id="screen-quiz">
+    <div class="progress-container">
+      <div class="progress-meta">
+        <span class="progress-step" id="step-label">Pregunta 1 de 10</span>
+        <span class="progress-pct" id="pct-label">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="q-category" id="q-category"></div>
+    <div class="q-text" id="q-text"></div>
+
+    <div class="options-list" id="options-list"></div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" id="btn-back">← Anterior</button>
+      <button class="btn-next" id="btn-next" disabled>Siguiente →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ RESULT ═══════════════ -->
+  <section class="screen" id="screen-result">
+    <div class="result-hero">
+      <div class="score-circle">
+        <span class="score-num" id="r-score">0</span>
+        <span class="score-den">/ 100</span>
+      </div>
+      <div class="result-level" id="r-level"></div>
+      <p class="result-desc" id="r-desc"></p>
+    </div>
+
+    <div class="dims-grid" id="dims-grid"></div>
+
+    <p class="recs-title">Recomendaciones clave para ti</p>
+    <div id="recs-list"></div>
+
+    <div class="cta-block">
+      <p class="cta-eyebrow">Siguiente paso</p>
+      <h2 class="cta-title">¿Quieres un plan 100% personalizado?</h2>
+      <p class="cta-desc">Basado en tus respuestas, puedo mostrarte exactamente cómo construir o fortalecer tu portafolio en acciones, FIBRAs, crypto e inmuebles — con estrategia real y acompañamiento directo.</p>
+      <button class="cta-main-btn" id="btn-whatsapp">
+        📲 Quiero mi sesión de diagnóstico →
+      </button><br>
+      <button class="cta-restart" id="btn-restart">↺ Repetir el test</button>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2025 Alpha Analyst · Educación financiera real</p>
+  <p style="margin-top:4px">Este test es educativo y no constituye asesoría de inversión regulada.</p>
+</footer>
+
+<script>
+const questions = [
+  {
+    id:1, category:"Fondo de emergencia", dimension:"Protección",
+    text:"¿Cuántos meses de gastos tienes ahorrados como fondo de emergencia?",
+    options:[
+      {label:"No tengo ningún fondo de emergencia", score:0},
+      {label:"Menos de 1 mes de gastos guardados", score:1},
+      {label:"Entre 1 y 3 meses de gastos cubiertos", score:2},
+      {label:"3 a 6 meses o más, en cuenta líquida", score:3}
+    ]
+  },
+  {
+    id:2, category:"Deudas", dimension:"Protección",
+    text:"¿Cómo describes tu situación actual con las deudas?",
+    options:[
+      {label:"Tengo deudas que me cuesta cubrir mes a mes", score:0},
+      {label:"Pago lo mínimo pero tengo deudas activas de tarjetas o préstamos", score:1},
+      {label:"Solo tengo deudas 'buenas' (hipoteca, auto) y las pago puntual", score:2},
+      {label:"No tengo deudas o las liquido antes de tiempo", score:3}
+    ]
+  },
+  {
+    id:3, category:"Ahorro e inversión", dimension:"Crecimiento",
+    text:"¿Qué porcentaje aproximado de tus ingresos estás invirtiendo cada mes?",
+    options:[
+      {label:"No invierto, gasto todo lo que entra", score:0},
+      {label:"Ahorro algo, pero sin estrategia ni instrumento definido", score:1},
+      {label:"Invierto entre el 5 y el 15% mensualmente", score:2},
+      {label:"Invierto más del 15% en instrumentos definidos", score:3}
+    ]
+  },
+  {
+    id:4, category:"Diversificación", dimension:"Crecimiento",
+    text:"¿En cuántas clases de activos tienes dinero trabajando hoy?",
+    options:[
+      {label:"Solo en efectivo o cuenta bancaria", score:0},
+      {label:"En una sola clase (solo acciones o solo crypto, etc.)", score:1},
+      {label:"En 2 tipos de activos (ej. acciones + CETES)", score:2},
+      {label:"En 3 o más: acciones, FIBRAs, crypto, inmuebles u otros", score:3}
+    ]
+  },
+  {
+    id:5, category:"Educación financiera", dimension:"Conocimiento",
+    text:"¿Qué tan cómodo/a te sientes tomando decisiones de inversión?",
+    options:[
+      {label:"No sé por dónde empezar, me da miedo perder dinero", score:0},
+      {label:"He leído algo pero no tengo un plan claro", score:1},
+      {label:"Entiendo los básicos y tengo una estrategia en mente", score:2},
+      {label:"Tengo criterio claro: analizo, planeo y ejecuto con confianza", score:3}
+    ]
+  },
+  {
+    id:6, category:"Fuentes de ingreso", dimension:"Crecimiento",
+    text:"¿Cómo son tus fuentes de ingreso actualmente?",
+    options:[
+      {label:"Solo un ingreso fijo (trabajo o negocio único)", score:0},
+      {label:"Un ingreso principal y algún extra esporádico", score:1},
+      {label:"Tengo 2 fuentes: activa + algún ingreso pasivo pequeño", score:2},
+      {label:"Múltiples fuentes: salario, inversiones, negocio propio u otras", score:3}
+    ]
+  },
+  {
+    id:7, category:"Protección patrimonial", dimension:"Protección",
+    text:"¿Tienes seguros y/o estructura legal para proteger tu patrimonio?",
+    options:[
+      {label:"No tengo ningún seguro ni estructura de protección", score:0},
+      {label:"Solo seguro médico básico", score:1},
+      {label:"Seguro de vida + médico, pero sin blindaje legal", score:2},
+      {label:"Tengo seguros, testamento o estructura (fideicomiso, empresa, etc.)", score:3}
+    ]
+  },
+  {
+    id:8, category:"Metas financieras", dimension:"Conocimiento",
+    text:"¿Tienes metas financieras escritas con fechas y montos concretos?",
+    options:[
+      {label:"No, solo sé que quiero 'ahorrar más' algún día", score:0},
+      {label:"Tengo ideas vagas pero nada formalizado", score:1},
+      {label:"Tengo 1 o 2 metas definidas con plazo claro", score:2},
+      {label:"Tengo un plan financiero con metas a corto, mediano y largo plazo", score:3}
+    ]
+  },
+  {
+    id:9, category:"Planeación del retiro", dimension:"Futuro",
+    text:"¿Estás planeando activamente tu retiro o independencia financiera?",
+    options:[
+      {label:"Nunca lo he pensado, confío en el IMSS o la suerte", score:0},
+      {label:"Lo he pensado pero no he tomado ninguna acción", score:1},
+      {label:"Tengo una afore activa y algún ahorro voluntario", score:2},
+      {label:"Tengo una estrategia de retiro con fecha y cifra objetivo", score:3}
+    ]
+  },
+  {
+    id:10, category:"Mindset financiero", dimension:"Conocimiento",
+    text:"¿Cómo describes tu relación emocional con el dinero?",
+    options:[
+      {label:"Me estresa, evito pensar en mis finanzas", score:0},
+      {label:"Me da algo de ansiedad pero intento manejarlo", score:1},
+      {label:"Tengo una relación neutral, lo veo como herramienta", score:2},
+      {label:"Tengo mentalidad de abundancia y estrategia clara", score:3}
+    ]
+  }
+];
+
+const DIM_COLORS = {
+  "Protección":"#3B82F6",
+  "Crecimiento":"#22C55E",
+  "Conocimiento":"#C9924A",
+  "Futuro":"#A78BFA"
+};
+
+const LEVELS = [
+  { min:80, label:"💎 Salud financiera sólida", color:"#22C55E",
+    desc:"Tu estructura financiera es robusta. El siguiente paso es optimizar y escalar tus activos con estrategia avanzada y gestión de riesgo profesional.",
+    recs:[
+      {icon:"📈", text:"<strong>Escala tu portafolio:</strong> Considera FIBRAs, ETFs internacionales y opciones para generar rendimientos superiores al promedio del mercado."},
+      {icon:"🛡️", text:"<strong>Blindaje legal:</strong> Evalúa estructuras fiscales eficientes (SAPI, fideicomiso) para proteger y transmitir patrimonio."},
+      {icon:"🌍", text:"<strong>Diversificación geográfica:</strong> Abre cuentas en brokers internacionales para exposición a mercados globales."}
+    ]
+  },
+  { min:60, label:"📈 En buen camino", color:"#C9924A",
+    desc:"Tienes bases sólidas pero hay áreas clave donde un plan bien ejecutado puede multiplicar tus resultados en los próximos 12-24 meses.",
+    recs:[
+      {icon:"🎯", text:"<strong>Define un plan de inversión:</strong> Establece porcentajes fijos por clase de activo y automatiza tus aportaciones mensuales."},
+      {icon:"📚", text:"<strong>Profundiza en instrumentos:</strong> Aprende a evaluar FIBRAs, acciones individuales y crypto con criterio propio."},
+      {icon:"💼", text:"<strong>Genera ingresos pasivos:</strong> Identifica cuál de tus habilidades puede convertirse en un ingreso adicional o digital."}
+    ]
+  },
+  { min:35, label:"🔧 Fundamentos por fortalecer", color:"#F59E0B",
+    desc:"Tienes intención pero te faltan estructura y herramientas. Con el acompañamiento correcto puedes avanzar en 90 días más de lo que avanzarías solo en 2 años.",
+    recs:[
+      {icon:"🚑", text:"<strong>Fondo de emergencia primero:</strong> Antes de invertir, construye un colchón de 3 meses. Sin él, cualquier imprevisto destruye tu progreso."},
+      {icon:"🔪", text:"<strong>Elimina deudas caras:</strong> Liquida tarjetas y créditos de consumo. Esa tasa del 40-60% anual es el peor 'anti-rendimiento' posible."},
+      {icon:"📊", text:"<strong>Empieza simple:</strong> CETES, fondos indexados o ETFs de bajo costo como primer paso de inversión real."}
+    ]
+  },
+  { min:0, label:"🚨 Zona de alerta", color:"#EF4444",
+    desc:"Tus finanzas están en riesgo real. El costo de no actuar hoy es mucho mayor que el de aprender y corregir el rumbo ahora.",
+    recs:[
+      {icon:"💡", text:"<strong>Claridad antes que acción:</strong> Haz un inventario de lo que entra y lo que sale cada mes. No puedes mejorar lo que no mides."},
+      {icon:"⛑️", text:"<strong>Estabiliza antes de invertir:</strong> Enfócate en cubrir gastos fijos, crear un pequeño ahorro de emergencia y detener la hemorragia de deudas."},
+      {icon:"🤝", text:"<strong>Busca acompañamiento:</strong> No tienes que resolver esto solo. Una sesión de diagnóstico puede darte claridad en una hora lo que tomaría meses descubrir."}
+    ]
+  }
+];
+
+let current = 0;
+let answers = {};
+
+function getLevel(pct) {
+  return LEVELS.find(l => pct >= l.min);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const pct = Math.round((current / questions.length) * 100);
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('step-label').textContent = `Pregunta ${current + 1} de ${questions.length}`;
+  document.getElementById('pct-label').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+  document.getElementById('q-category').textContent = q.category;
+  document.getElementById('q-text').textContent = q.text;
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = q.options.map((o, i) => `
+    <button class="opt${answers[current] === i ? ' selected' : ''}" data-idx="${i}">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${o.label}</span>
+    </button>
+  `).join('');
+
+  list.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      answers[current] = parseInt(btn.dataset.idx);
+      list.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      btn.querySelector('.opt-letter').style.background = '#C9924A';
+      document.getElementById('btn-next').disabled = false;
+    });
+  });
+
+  document.getElementById('btn-next').disabled = answers[current] === undefined;
+  document.getElementById('btn-back').textContent = current === 0 ? '← Inicio' : '← Anterior';
+
+  const isLast = current === questions.length - 1;
+  document.getElementById('btn-next').textContent = isLast ? 'Ver mi diagnóstico →' : 'Siguiente →';
+}
+
+function renderResult() {
+  const total = Object.keys(answers).reduce((s, qi) => s + questions[qi].options[answers[qi]].score, 0);
+  const max = questions.length * 3;
+  const pct = Math.round((total / max) * 100);
+  const level = getLevel(pct);
+
+  document.getElementById('r-score').textContent = pct;
+  document.getElementById('r-score').style.color = level.color;
+  document.getElementById('score-circle') && (document.querySelector('.score-circle').style.borderColor = level.color);
+  document.getElementById('r-level').textContent = level.label;
+  document.getElementById('r-desc').textContent = level.desc;
+
+  // Dimensions
+  const dims = {};
+  questions.forEach((q, i) => {
+    if (!dims[q.dimension]) dims[q.dimension] = { total: 0, max: 0 };
+    dims[q.dimension].total += answers[i] !== undefined ? q.options[answers[i]].score : 0;
+    dims[q.dimension].max += 3;
+  });
+
+  document.getElementById('dims-grid').innerHTML = Object.entries(dims).map(([name, d]) => {
+    const dp = Math.round((d.total / d.max) * 100);
+    const col = DIM_COLORS[name] || '#C9924A';
+    return `
+      <div class="dim-card">
+        <div class="dim-header">
+          <span class="dim-name">${name}</span>
+          <span class="dim-pct" style="color:${col}">${dp}%</span>
+        </div>
+        <div class="dim-bar-bg">
+          <div class="dim-bar-fill" style="width:${dp}%; background:${col};"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Recommendations
+  document.getElementById('recs-list').innerHTML = level.recs.map(r => `
+    <div class="rec-item">
+      <div class="rec-icon">${r.icon}</div>
+      <div class="rec-text">${r.text}</div>
+    </div>
+  `).join('');
+
+  // Build WhatsApp message with full results
+  const dimLines = Object.entries(dims).map(([name, d]) => {
+    const dp = Math.round((d.total / d.max) * 100);
+    const bar = dp >= 75 ? '🟢' : dp >= 50 ? '🟡' : dp >= 25 ? '🟠' : '🔴';
+    return `${bar} ${name}: ${dp}%`;
+  }).join('\n');
+
+  const waMsg =
+`🩺 *TEST DE SALUD FINANCIERA - Alpha Analyst*
+
+📊 *Score general: ${pct}/100*
+🏷️ Nivel: ${level.label.replace(/[^\w\s\u00C0-\u024F\u4E00-\u9FA5]/g,'').trim()}
+
+📐 *Resultados por dimensión:*
+${dimLines}
+
+💬 Acabo de completar el test y me interesa recibir un diagnóstico personalizado. ¿Podemos agendar una sesión?`;
+
+  const waUrl = `https://wa.me/523320352200?text=${encodeURIComponent(waMsg)}`;
+  document.getElementById('btn-whatsapp').onclick = () => window.open(waUrl, '_blank');
+
+  showScreen('screen-result');
+}
+
+// Events
+document.getElementById('btn-start').addEventListener('click', () => {
+  current = 0; answers = {};
+  showScreen('screen-quiz');
+  renderQuestion();
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  if (current === 0) { showScreen('screen-intro'); return; }
+  current--;
+  renderQuestion();
+});
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (answers[current] === undefined) return;
+  if (current === questions.length - 1) { renderResult(); return; }
+  current++;
+  renderQuestion();
+});
+
+document.getElementById('btn-restart').addEventListener('click', () => {
+  current = 0; answers = {};
+  showScreen('screen-intro');
+});
+</script>
+</body>
+</html>
